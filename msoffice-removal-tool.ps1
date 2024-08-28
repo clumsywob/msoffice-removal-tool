@@ -25,9 +25,6 @@
   Just output on screen
 .NOTES
   Version:        1.2
-  Author:         Singleton Factory GmbH
-  Creation Date:  2023-01-18
-  Purpose/Change: New company, new luck
 .EXAMPLE
   .\msoffice-removal-tool.ps1 -InstallOffice365 -SupressReboot
 #>
@@ -46,7 +43,7 @@ $SaRA_URL = "https://aka.ms/SaRA_CommandLineVersionFiles"
 $SaRA_ZIP = "$env:TEMP\SaRA.zip"
 $SaRA_DIR = "$env:TEMP\SaRA"
 $SaRA_EXE = "$SaRA_DIR\SaRAcmd.exe"
-$Office365Setup_URL = "https://github.com/Admonstrator/msoffice-removal-tool/raw/main/office365-installer"
+$Office365Setup_URL = "https://github.com/clumsywob/msoffice-removal-tool/raw/main/Office365-Installer"
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 Function Invoke-OfficeUninstall {
     if (-Not (Test-Path "$SaRA_DIR")) {
@@ -175,23 +172,14 @@ Function Invoke-RebootInSeconds($Seconds) {
 }
 
 Function Set-CurrentStage($StageValue) {
-    if (-not (Test-Path "HKLM:\Software\OEM\Singleton-Factory-GmbH\M365\Install")) {
-        New-Item -Path "HKLM:\Software\OEM\Singleton-Factory-GmbH\M365\Install" -Force | Out-Null
+    if (-not (Test-Path "HKLM:\Software\OEM\IVS\M365\Install")) {
+        New-Item -Path "HKLM:\Software\OEM\IVS\M365\Install" -Force | Out-Null
     }
-    New-ItemProperty -Path "HKLM:\Software\OEM\Singleton-Factory-GmbH\M365\Install" -Name "CurrentStage" -Value $StageValue -PropertyType String -Force | Out-Null
+    New-ItemProperty -Path "HKLM:\Software\OEM\IVS\M365\Install" -Name "CurrentStage" -Value $StageValue -PropertyType String -Force | Out-Null
 }
 
 Function Invoke-Intro {   
-Write-Host "  __ _             _      _                  ___          _                   "
-Write-Host " / _(_)_ __   __ _| | ___| |_ ___  _ __     / __\_ _  ___| |_ ___  _ __ _   _ "
-Write-Host " \ \| | '_ \ / _' | |/ _ \ __/ _ \| '_ \   / _\/ _' |/ __| __/ _ \| '__| | | |"
-Write-Host " _\ \ | | | | (_| | |  __/ || (_) | | | | / / | (_| | (__| || (_) | |  | |_| |"
-Write-Host " \__/_|_| |_|\__, |_|\___|\__\___/|_| |_| \/   \__,_|\___|\__\___/|_|   \__, |"
-Write-Host "             |___/                                                      |___/ "
 Write-Host "Microsoft Office Removal Tool"
-Write-Host "by Aaron Viehl (Singleton Factory GmbH)"
-Write-Host "singleton-factory.de"
-Write-Host ""
 }
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
@@ -209,8 +197,8 @@ if (-Not $Force) {
 Invoke-Intro
 # Check if there is a stage to resume
 if (-not ($RunAgain)) {
-    if (Test-Path "HKLM:\Software\OEM\Singleton-Factory-GmbH\M365\Install") {
-        $CurrentStageValue = (Get-ItemProperty "HKLM:\Software\OEM\Singleton-Factory-GmbH\M365\Install").CurrentStage
+    if (Test-Path "HKLM:\Software\OEM\IVS\M365\Install") {
+        $CurrentStageValue = (Get-ItemProperty "HKLM:\Software\OEM\IVS\M365\Install").CurrentStage
         Switch ($CurrentStageValue) {
             1 {
                 Write-Host "Resuming Stage 1: Uninstalling Office ..."
