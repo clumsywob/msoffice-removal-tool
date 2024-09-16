@@ -63,7 +63,7 @@ Function Invoke-OfficeUninstall {
     }
 }
 Function Invoke-SaRADownload {    
-    Invoke-WebRequest -uri "$SaRA_URL" -Destination "$SaRA_ZIP" 
+    Start-BitsTransfer -Source "$SaRA_URL" -Destination "$SaRA_ZIP" 
     if (Test-Path "$SaRA_ZIP") {
         Write-Host "Unzipping ..."
         Expand-Archive -Path "$SaRA_ZIP" -DestinationPath "$SaRA_DIR" -Force
@@ -137,16 +137,16 @@ Function Invoke-SaRA {
 Function Invoke-SetupOffice365($Office365ConfigFile) {
     if ($Office365ConfigFile -eq "$Office365Setup_URL/purge.xml") {
         Write-Host "Downloading Office365 Installer ..."
-        Invoke-WebRequest -uri "$Office365Setup_URL/setup.exe" -Destination "$SaRA_DIR\setup.exe"
-        Invoke-WebRequest -uri "$Office365ConfigFile" -Destination "$SaRA_DIR\purge.xml"
+        Start-BitsTransfer -Source "$Office365Setup_URL/setup.exe" -Destination "$SaRA_DIR\setup.exe"
+        Start-BitsTransfer -Source "$Office365ConfigFile" -Destination "$SaRA_DIR\purge.xml"
         Write-Host "Executing Office365 Setup ..."
         $OfficeSetup = Start-Process -FilePath "$SaRA_DIR\setup.exe" -ArgumentList "/configure $SaRA_DIR\purge.xml" -Wait -PassThru -NoNewWindow 
     }
     
     if ($InstallOffice365) {
         Write-Host "Downloading Office365 Installer ..."
-        Invoke-WebRequest -uri "$Office365Setup_URL/setup.exe" -Destination "$SaRA_DIR\setup.exe"
-        Invoke-WebRequest -uri "$Office365ConfigFile" -Destination "$SaRA_DIR\config.xml"
+        Start-BitsTransfer -Source "$Office365Setup_URL/setup.exe" -Destination "$SaRA_DIR\setup.exe"
+        Start-BitsTransfer -Source "$Office365ConfigFile" -Destination "$SaRA_DIR\config.xml"
         Write-Host "Executing Office365 Setup ..."
         $OfficeSetup = Start-Process -FilePath "$SaRA_DIR\setup.exe" -ArgumentList "/configure $SaRA_DIR\config.xml" -Wait -PassThru -NoNewWindow 
         switch ($OfficeSetup.ExitCode) {
